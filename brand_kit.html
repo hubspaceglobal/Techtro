@@ -1,0 +1,289 @@
+import { useState } from "react";
+
+const G = `
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+`;
+
+const COLORS = {
+  tealLight: "#00c8cf",
+  teal:      "#00A0A6",
+  tealDark:  "#007a7f",
+  brown:     "#592D00",
+  red:       "#A10019",
+};
+
+const LIGHT = {
+  bg:       "#f4f6f7",
+  surface:  "#ffffff",
+  surface2: "#eef1f2",
+  border:   "rgba(0,160,166,0.18)",
+  text:     "#0d1f1f",
+  textSub:  "#3a5a5a",
+  textMute: "#7a9a9a",
+};
+
+const DARK = {
+  bg:       "#0a1414",
+  surface:  "#0f1f1f",
+  surface2: "#152828",
+  border:   "rgba(0,160,166,0.22)",
+  text:     "#e8f4f4",
+  textSub:  "#9ababa",
+  textMute: "#4a7a7a",
+};
+
+const TF = { fontFamily:"'Conthrax','Montserrat',sans-serif" };
+const MF = { fontFamily:"'Montserrat',sans-serif" };
+
+/* ── LOGO SVG ── */
+function Logo({ size = 48, theme = "dark" }) {
+  const fg = theme === "dark" ? "#fff" : "#0d1f1f";
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* outer hex ring */}
+      <polygon points="40,4 72,22 72,58 40,76 8,58 8,22"
+        stroke={COLORS.teal} strokeWidth="2.5" fill="none"/>
+      {/* inner filled hex */}
+      <polygon points="40,14 64,28 64,52 40,66 16,52 16,28"
+        fill={COLORS.teal} opacity="0.12"/>
+      {/* top-left accent */}
+      <line x1="8" y1="22" x2="24" y2="31" stroke={COLORS.red} strokeWidth="2.5" strokeLinecap="round"/>
+      {/* top-right accent */}
+      <line x1="72" y1="22" x2="56" y2="31" stroke={COLORS.red} strokeWidth="2.5" strokeLinecap="round"/>
+      {/* bottom accent */}
+      <line x1="40" y1="66" x2="40" y2="76" stroke={COLORS.brown} strokeWidth="2.5" strokeLinecap="round"/>
+      {/* center M mark */}
+      <polyline points="28,50 28,32 40,44 52,32 52,50"
+        stroke={COLORS.teal} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* dot */}
+      <circle cx="40" cy="26" r="3" fill={COLORS.red}/>
+    </svg>
+  );
+}
+
+function LogoFull({ theme = "dark", scale = 1 }) {
+  const T = theme === "dark" ? DARK : LIGHT;
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap: 12 * scale }}>
+      <Logo size={48 * scale} theme={theme} />
+      <div>
+        <div style={{ ...TF, fontSize: 20 * scale, fontWeight: 700, color: COLORS.teal, letterSpacing: 2, lineHeight: 1 }}>MICROBIZ</div>
+        <div style={{ ...MF, fontSize: 9 * scale, color: T.textMute, letterSpacing: 3, textTransform:"uppercase", marginTop: 3 }}>Digital Business Solutions</div>
+      </div>
+    </div>
+  );
+}
+
+/* ── SECTION WRAPPER ── */
+function Section({ label, children, T }) {
+  return (
+    <div style={{ marginBottom: 40 }}>
+      <div style={{ ...MF, fontSize: 10, fontWeight: 700, letterSpacing: 4, textTransform:"uppercase", color: COLORS.teal, marginBottom: 16, display:"flex", alignItems:"center", gap: 10 }}>
+        <div style={{ height: 1, width: 24, background: COLORS.teal }} />
+        {label}
+        <div style={{ height: 1, flex: 1, background: `linear-gradient(90deg,${COLORS.teal},transparent)` }} />
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/* ── CARD ── */
+function Card({ children, T, style = {} }) {
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20, ...style }}>
+      {children}
+    </div>
+  );
+}
+
+/* ── MAIN ── */
+export default function App() {
+  const [mode, setMode] = useState("dark");
+  const T = mode === "dark" ? DARK : LIGHT;
+
+  const palette = [
+    { name:"Teal Light",  hex:"#00c8cf", role:"Gradient / Glow",  text:"#fff" },
+    { name:"Teal",        hex:"#00A0A6", role:"Primary Brand",     text:"#fff" },
+    { name:"Teal Dark",   hex:"#007a7f", role:"Gradient / Depth",  text:"#fff" },
+    { name:"Brown",       hex:"#592D00", role:"Warm Accent",        text:"#fff" },
+    { name:"Red",         hex:"#A10019", role:"Alert / CTA",        text:"#fff" },
+    { name:"White",       hex:"#FFFFFF", role:"Light Surface",      text:"#0d1f1f", border:"#ddd" },
+    { name:"Dark BG",     hex:"#0a1414", role:"Dark Background",    text:"#fff" },
+  ];
+
+  const typeScale = [
+    { label:"Display", tag:"Conthrax", size:"36px", weight:"800", sample:"Digital Identity" },
+    { label:"H1", tag:"Conthrax", size:"28px", weight:"700", sample:"Brand Architecture" },
+    { label:"H2", tag:"Conthrax", size:"20px", weight:"700", sample:"Module Overview" },
+    { label:"H3", tag:"Montserrat", size:"16px", weight:"700", sample:"Section Heading" },
+    { label:"Body", tag:"Montserrat", size:"14px", weight:"400", sample:"Subscription-based business services delivered at scale for the modern entrepreneur." },
+    { label:"Caption", tag:"Montserrat", size:"12px", weight:"500", sample:"MicroBiz · Tech Tuesdays · Digital Identity Series" },
+    { label:"Label", tag:"Montserrat", size:"10px", weight:"700", sample:"MODULE 01 · BUSINESS REGISTRATION" },
+  ];
+
+  const uiComponents = [
+    { type:"btn-primary",  label:"Get Started" },
+    { type:"btn-secondary",label:"Learn More" },
+    { type:"btn-danger",   label:"Action Required" },
+    { type:"badge-teal",   label:"APPROVED" },
+    { type:"badge-red",    label:"REQUIRED" },
+    { type:"badge-brown",  label:"IN PROGRESS" },
+  ];
+
+  const icons = ["◈","⬡","◆","▸","↓","✓","○","▶","→","◐"];
+
+  return (
+    <div style={{ ...MF, background: T.bg, color: T.text, minHeight:"100vh" }}>
+      <style>{G}</style>
+
+      {/* TOPBAR */}
+      <div style={{ background: T.surface, borderBottom:`1px solid ${T.border}`, padding:"14px 32px", display:"flex", justifyContent:"space-between", alignItems:"center", position:"sticky", top:0, zIndex:50 }}>
+        <LogoFull theme={mode} scale={0.85} />
+        <div style={{ display:"flex", alignItems:"center", gap: 12 }}>
+          <span style={{ ...MF, fontSize:11, color: T.textMute, fontWeight:600, letterSpacing:2 }}>BRAND KIT v1.0</span>
+          <button onClick={() => setMode(m => m==="dark"?"light":"dark")}
+            style={{ ...MF, background:`${COLORS.teal}22`, border:`1.5px solid ${COLORS.teal}`, color: COLORS.teal, borderRadius:6, padding:"7px 16px", fontSize:12, fontWeight:700, cursor:"pointer", letterSpacing:1 }}>
+            {mode==="dark" ? "☀ Light Mode" : "☾ Dark Mode"}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 960, margin:"0 auto", padding:"40px 24px" }}>
+
+        {/* HEADER */}
+        <div style={{ textAlign:"center", marginBottom:52 }}>
+          <div style={{ ...MF, fontSize:10, color: COLORS.teal, letterSpacing:4, textTransform:"uppercase", marginBottom:10, fontWeight:700 }}>Brand Identity System</div>
+          <h1 style={{ ...TF, fontSize:"clamp(32px,5vw,52px)", fontWeight:800, color: T.text, letterSpacing:2, marginBottom:10 }}>MicroBiz</h1>
+          <p style={{ ...MF, fontSize:14, color: T.textSub, maxWidth:480, margin:"0 auto", lineHeight:1.8, fontWeight:500 }}>
+            A complete brand system for digital business solutions — professional, technical, and vibrant across all surfaces.
+          </p>
+          <div style={{ display:"flex", justifyContent:"center", gap:6, marginTop:18 }}>
+            {[COLORS.teal, COLORS.red, COLORS.brown].map(c => (
+              <div key={c} style={{ width:8, height:8, borderRadius:"50%", background:c, boxShadow:`0 0 8px ${c}` }} />
+            ))}
+          </div>
+        </div>
+
+        {/* LOGO SECTION */}
+        <Section label="Logo System" T={T}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:16 }}>
+            {/* Dark bg */}
+            <Card T={T} style={{ background:"#0a1414", display:"flex", flexDirection:"column", alignItems:"center", gap:20, padding:28 }}>
+              <div style={{ ...MF, fontSize:9, color:"#4a7a7a", letterSpacing:3, textTransform:"uppercase", fontWeight:700 }}>On Dark</div>
+              <LogoFull theme="dark" />
+              <Logo size={40} theme="dark" />
+            </Card>
+            {/* Light bg */}
+            <Card T={T} style={{ background:"#f4f6f7", border:"1px solid #ddd", display:"flex", flexDirection:"column", alignItems:"center", gap:20, padding:28 }}>
+              <div style={{ ...MF, fontSize:9, color:"#7a9a9a", letterSpacing:3, textTransform:"uppercase", fontWeight:700 }}>On Light</div>
+              <LogoFull theme="light" />
+              <Logo size={40} theme="light" />
+            </Card>
+            {/* Teal bg */}
+            <Card T={T} style={{ background:`linear-gradient(135deg,${COLORS.tealLight},${COLORS.tealDark})`, border:"none", display:"flex", flexDirection:"column", alignItems:"center", gap:20, padding:28 }}>
+              <div style={{ ...MF, fontSize:9, color:"rgba(255,255,255,0.6)", letterSpacing:3, textTransform:"uppercase", fontWeight:700 }}>On Teal</div>
+              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                <svg width="44" height="44" viewBox="0 0 80 80" fill="none">
+                  <polygon points="40,4 72,22 72,58 40,76 8,58 8,22" stroke="rgba(255,255,255,0.9)" strokeWidth="2.5" fill="rgba(255,255,255,0.1)"/>
+                  <line x1="8" y1="22" x2="24" y2="31" stroke={COLORS.red} strokeWidth="2.5" strokeLinecap="round"/>
+                  <line x1="72" y1="22" x2="56" y2="31" stroke={COLORS.red} strokeWidth="2.5" strokeLinecap="round"/>
+                  <line x1="40" y1="66" x2="40" y2="76" stroke={COLORS.brown} strokeWidth="2.5" strokeLinecap="round"/>
+                  <polyline points="28,50 28,32 40,44 52,32 52,50" stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="40" cy="26" r="3" fill={COLORS.red}/>
+                </svg>
+                <div>
+                  <div style={{ ...TF, fontSize:18, fontWeight:700, color:"#fff", letterSpacing:2, lineHeight:1 }}>MICROBIZ</div>
+                  <div style={{ ...MF, fontSize:8, color:"rgba(255,255,255,0.65)", letterSpacing:3, marginTop:3 }}>Digital Business Solutions</div>
+                </div>
+              </div>
+              <svg width="36" height="36" viewBox="0 0 80 80" fill="none">
+                <polygon points="40,4 72,22 72,58 40,76 8,58 8,22" stroke="rgba(255,255,255,0.9)" strokeWidth="2.5" fill="rgba(255,255,255,0.1)"/>
+                <polyline points="28,50 28,32 40,44 52,32 52,50" stroke="#fff" strokeWidth="3.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="40" cy="26" r="3" fill={COLORS.red}/>
+              </svg>
+            </Card>
+          </div>
+
+          {/* Logo construction */}
+          <Card T={T} style={{ marginTop:16, padding:24 }}>
+            <div style={{ ...MF, fontSize:10, color: T.textMute, letterSpacing:3, textTransform:"uppercase", fontWeight:700, marginBottom:16 }}>Logo Construction</div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:24, alignItems:"center" }}>
+              <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8 }}>
+                <svg width="56" height="56" viewBox="0 0 80 80" fill="none">
+                  <polygon points="40,4 72,22 72,58 40,76 8,58 8,22" stroke={COLORS.teal} strokeWidth="2.5" fill="none"/>
+                  <text x="40" y="46" textAnchor="middle" fill={COLORS.teal} fontSize="9" fontFamily="Montserrat" fontWeight="700">HEX RING</text>
+                </svg>
+                <div style={{ ...MF, fontSize:10, color: T.textMute, fontWeight:600 }}>Structure</div>
+              </div>
+              <div style={{ color: T.textMute, fontSize:18 }}>+</div>
+              <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8 }}>
+                <svg width="56" height="56" viewBox="0 0 80 80" fill="none">
+                  <polyline points="28,50 28,32 40,44 52,32 52,50" stroke={COLORS.teal} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <div style={{ ...MF, fontSize:10, color: T.textMute, fontWeight:600 }}>M-Mark</div>
+              </div>
+              <div style={{ color: T.textMute, fontSize:18 }}>+</div>
+              <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8 }}>
+                <svg width="56" height="56" viewBox="0 0 80 80" fill="none">
+                  <line x1="8" y1="22" x2="24" y2="31" stroke={COLORS.red} strokeWidth="3" strokeLinecap="round"/>
+                  <line x1="72" y1="22" x2="56" y2="31" stroke={COLORS.red} strokeWidth="3" strokeLinecap="round"/>
+                  <circle cx="40" cy="26" r="5" fill={COLORS.red}/>
+                  <line x1="40" y1="60" x2="40" y2="76" stroke={COLORS.brown} strokeWidth="3" strokeLinecap="round"/>
+                </svg>
+                <div style={{ ...MF, fontSize:10, color: T.textMute, fontWeight:600 }}>Accents</div>
+              </div>
+              <div style={{ color: T.textMute, fontSize:18 }}>=</div>
+              <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8 }}>
+                <Logo size={56} theme={mode} />
+                <div style={{ ...MF, fontSize:10, color: T.textMute, fontWeight:600 }}>Final Mark</div>
+              </div>
+            </div>
+          </Card>
+        </Section>
+
+        {/* COLOR PALETTE */}
+        <Section label="Color Palette" T={T}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))", gap:10, marginBottom:16 }}>
+            {palette.map(c => (
+              <div key={c.hex}>
+                <div style={{ height:80, borderRadius:"8px 8px 0 0", background:c.hex, border:c.border?`1px solid ${c.border}`:"none",
+                  boxShadow:`0 0 16px ${c.hex}55` }} />
+                <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderTop:"none", borderRadius:"0 0 8px 8px", padding:"10px 12px" }}>
+                  <div style={{ ...TF, fontSize:11, fontWeight:700, color:T.text, marginBottom:2 }}>{c.name}</div>
+                  <div style={{ ...MF, fontSize:10, color:T.textMute, marginBottom:4, fontWeight:600 }}>{c.hex}</div>
+                  <div style={{ ...MF, fontSize:9, color:T.textMute, fontWeight:500 }}>{c.role}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Gradient strip */}
+          <Card T={T} style={{ padding:20 }}>
+            <div style={{ ...MF, fontSize:10, color:T.textMute, letterSpacing:3, textTransform:"uppercase", fontWeight:700, marginBottom:12 }}>Brand Gradient</div>
+            <div style={{ height:36, borderRadius:8, background:`linear-gradient(90deg, ${COLORS.tealLight}, ${COLORS.teal}, ${COLORS.tealDark})`, boxShadow:`0 0 20px ${COLORS.teal}66`, marginBottom:10 }}/>
+            <div style={{ ...MF, fontSize:11, color:T.textMute, fontWeight:500 }}>
+              Primary: #00c8cf → #00A0A6 → #007a7f &nbsp;|&nbsp; Accent: #A10019 (Red) · #592D00 (Brown)
+            </div>
+          </Card>
+
+          {/* Color usage rules */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10, marginTop:10 }}>
+            {[
+              { color: COLORS.teal,  label:"Teal — Primary", rules:["Navigation & headers","Progress indicators","Primary buttons","Active states"] },
+              { color: COLORS.red,   label:"Red — Alert / CTA", rules:["CTAs & primary actions","Error states","Badges requiring action","Priority alerts"] },
+              { color: COLORS.brown, label:"Brown — Warm Accent", rules:["Secondary actions","In-progress states","Warm callout cards","Retake / soft CTAs"] },
+            ].map(item => (
+              <Card key={item.color} T={T} style={{ borderLeft:`3px solid ${item.color}`, boxShadow:`0 0 12px ${item.color}22` }}>
+                <div style={{ ...MF, fontSize:10, color:item.color, fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:10, textShadow:`0 0 8px ${item.color}` }}>{item.label}</div>
+                {item.rules.map((r,i) => (
+                  <div key={i} style={{ ...MF, fontSize:12, color:T.textSub, marginBottom:5, display:"flex", gap:6, fontWeight:500 }}>
+                    <span style={{ color:item.color }}>▸</span>{r}
+                  </div>
+                ))}
+              </Card>
+            ))}
+          </div>
+              </Section>
+              
