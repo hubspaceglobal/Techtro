@@ -1,0 +1,221 @@
+import { useState } from "react";
+
+const TEAL="#00A0A6", RED="#A10019", BROWN="#592D00";
+const G=`@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');`;
+const M={fontFamily:"'Montserrat',sans-serif"};
+const TF={fontFamily:"'Conthrax','Montserrat',sans-serif",letterSpacing:2};
+const BG={
+  background:"radial-gradient(ellipse at 25% 15%, #00c8cf 0%, #00A0A6 45%, #007a7f 100%)",
+  minHeight:"100vh", color:"#fff", ...M, backgroundAttachment:"fixed"
+};
+const card=(extra={})=>({
+  background:"rgba(0,0,0,0.35)",
+  backdropFilter:"blur(16px)", WebkitBackdropFilter:"blur(16px)",
+  border:"1px solid rgba(255,255,255,0.18)",
+  borderRadius:10,
+  boxShadow:"0 4px 24px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.1)",
+  ...extra
+});
+
+const modAccents=[TEAL, RED, BROWN, TEAL];
+
+const modules=[
+  {id:1,date:"April 7",title:"Who Are You Online?",subtitle:"Understanding Digital Identity",
+   objective:"Define your digital identity and understand how the internet sees you.",
+   overview:"Your digital identity is everything about you that exists online — usernames, profiles, purchase history, emails, device IDs, and more. Most people have never intentionally shaped it; it simply accumulated over time. This module helps you take inventory and understand the technical systems that define you online.",
+   lessons:[
+     {id:"1.1",title:"What Is Digital Identity?",content:"Digital identity is the collection of information about you that exists online. It includes usernames, passwords, biometric data, digital footprints, social profiles, and professional identities. Unlike a physical identity, your digital identity is always on — it exists and is accessed even when you're offline."},
+     {id:"1.2",title:"How IP Addresses Identify You",content:"Every device connected to the internet is assigned an IP address — a unique number that allows networks to route data to and from your device. When you visit a website, your IP address is logged. It can reveal your approximate location, your internet provider, and your browsing patterns."},
+     {id:"1.3",title:"How URLs Work",content:"A URL is the web address used to locate a resource online. It has four parts: Protocol (https://), Domain Name (google), Domain Category (.com), and Path (/support/page). Understanding URLs helps you identify safe vs. suspicious sites and understand how web content is structured and tracked."},
+     {id:"1.4",title:"Your Digital Footprint",content:"Every action you take online leaves a trace. Active footprints are things you intentionally share (posts, sign-ups, reviews). Passive footprints are collected without direct input (browsing history, location data, ad tracking). Most people are unaware of the size and reach of their passive footprint."},
+   ],
+   quiz:[
+     {q:"What does IP stand for?",opts:["Internet Page","Internet Protocol","Identity Profile","Internal Process"],ans:1},
+     {q:"Which part of a URL identifies the website name?",opts:["Protocol","Path","Domain Name","Domain Category"],ans:2},
+     {q:"A passive digital footprint is:",opts:["Content you post on social media","Data collected without your direct input","Your email address","Your username"],ans:1},
+   ],
+   resources:["Worksheet: Digital Footprint Audit","Checklist: Know Your Online Accounts","Reading: Digital Identity Infosheet"],
+   action:"Google yourself. Review the first 3 pages of results and list everything you find."},
+  {id:2,date:"April 14",title:"How the Internet Identifies You",subtitle:"The Tech Behind the Identity",
+   objective:"Understand the technical systems — SIM cards, email, and IP addresses — that create your digital trail.",
+   overview:"The internet doesn't just know your name — it knows your device, your phone number, your email server, and your location. We go under the hood to understand the infrastructure that identifies you online and how companies monetize that data.",
+   lessons:[
+     {id:"2.1",title:"How SIM Cards Work",content:"A SIM card identifies your phone to a cellular network. Each SIM has a unique ICCID. When activated, your carrier links this ID to your phone number and account. When you insert your SIM into any phone, that device inherits your identity on the network."},
+     {id:"2.2",title:"How Email Works",content:"Email travels: client → SMTP server → recipient's mail server (spam/virus check) → inbox (IMAP/POP). Every email you send contains metadata — your IP address, timestamp, device info — embedded in its headers."},
+     {id:"2.3",title:"Intro to Digital Wallets",content:"A digital wallet securely stores account details, payment methods, and identity credentials. Wallets like MetaMask serve as a unique, portable key to identify you in digital transactions on decentralized networks."},
+     {id:"2.4",title:"Data Ownership & Privacy",content:"Your digital identity is valuable property. Browsing behavior, location, purchases, and social activity are constantly collected and sold to advertisers. The decentralized web is creating new tools for individuals to own, manage, and monetize their own data."},
+   ],
+   quiz:[
+     {q:"What does ICCID refer to on a SIM card?",opts:["Internal Cell Carrier ID","Integrated Circuit Card Identifier","Internet Communication Card ID","Identity Card Circuit Data"],ans:1},
+     {q:"Which protocol is used to SEND email?",opts:["IMAP","POP","SMTP","HTTP"],ans:2},
+     {q:"A digital wallet primarily stores:",opts:["Physical cash","Account details and digital assets","SIM card data","Email passwords"],ans:1},
+   ],
+   resources:["Worksheet: Map Your Digital Identity Trail","Guide: Email Header Analysis","Resource: Getting Started with MetaMask"],
+   action:"Diagram your personal digital identity trail — from your SIM → carrier → email → web."},
+  {id:3,date:"April 21",title:"Building Your Digital Reputation",subtitle:"Intentional Identity Design",
+   objective:"Create a protected, intentional web profile and develop your personal brand narrative.",
+   overview:"Now that you understand how digital identity works, it's time to build yours with intention. You'll craft your personal mission statement, set up a digital wallet, and begin assembling the building blocks of your Personal Digital Profile.",
+   lessons:[
+     {id:"3.1",title:"Creating a Protected Web Profile",content:"Consider using an alias to separate your personal identity from your public-facing brand. Be conscious of every piece of personal information you share. If you are not directly benefiting from sharing your data, limit your exposure. Use privacy settings aggressively on every platform."},
+     {id:"3.2",title:"Setting Up a Digital Wallet",content:"MetaMask is a browser-based digital wallet for managing a digital identity on the blockchain. Steps: (1) Install the browser extension, (2) Create a new wallet, (3) Store your Secret Recovery Phrase offline securely, (4) Never share your private key. Your wallet address becomes a unique, portable digital ID."},
+     {id:"3.3",title:"Personal Branding Fundamentals",content:"Your digital reputation is shaped by Desires, Gifts, Strengths, Vision & Purpose, Mission, and Values. Aligning your digital presence to these six elements creates an authentic, compelling brand that attracts the right opportunities."},
+     {id:"3.4",title:"Writing Your Personal Mission Statement",content:"A strong personal mission statement answers: Who are you? What have you done? What are you doing now? Keep it under 500 words. Use it as the foundation of your biography across LinkedIn, your website, and any professional platform."},
+   ],
+   quiz:[
+     {q:"What should you do with your MetaMask Secret Recovery Phrase?",opts:["Share it with your employer","Store it in a notes app","Write it down and store it offline securely","Post it in a private group"],ans:2},
+     {q:"Which is NOT one of the six personal branding elements?",opts:["Gifts","Followers","Values","Vision"],ans:1},
+     {q:"A personal mission statement should:",opts:["Be over 1,000 words","Answer who you are, what you've done, and what you're doing","Focus only on future goals","Be identical to your resume"],ans:1},
+   ],
+   resources:["Template: Personal Mission Statement","Worksheet: Personal SWOT Analysis","Guide: LinkedIn Profile Optimization","Checklist: Resume/CV Update Checklist"],
+   action:"Write your first draft Personal Mission Statement (500 words max). Share it with one trusted person for feedback."},
+  {id:4,date:"April 28",title:"Capstone — Personal Digital Profile",subtitle:"Integration & Launch",
+   objective:"Synthesize all four modules into a complete, launch-ready Personal Digital Profile.",
+   overview:"This is where everything comes together. Your Personal Digital Profile is a comprehensive, intentional representation of who you are, what you've built, and where you're going. Assemble all components, conduct a final audit, and present with confidence.",
+   lessons:[
+     {id:"4.1",title:"What Is a Personal Digital Profile?",content:"A complete package including: protected web profile, configured digital wallet, polished biography and mission statement, updated resume/CV, digital business card, curated social media profiles, personal SWOT assessment, personal dashboard, and a 90-day personal development plan."},
+     {id:"4.2",title:"Assembling Your Profile Components",content:"Review each component: Web Profile (alias consistent?), Digital Wallet (MetaMask configured?), Bio & Mission (under 500 words?), Resume/CV (current, formatted, error-free?), Digital Business Card (links to best presence?), Social Profiles (audited and professional?)."},
+     {id:"4.3",title:"Your Personal Dashboard",content:"A personal dashboard centralizes your digital identity — one place to monitor your online presence, track credentials, and manage profiles. Tools like Notion, Google Sites, or Linktree can serve as your dashboard. Goal: one URL that represents all of you."},
+     {id:"4.4",title:"Your 90-Day Digital Identity Plan",content:"Month 1 — Complete and publish all profile components. Month 2 — Engage consistently on one primary platform, build one new credential or skill. Month 3 — Audit your footprint again, refine your mission statement, and expand your network with intention."},
+   ],
+   quiz:[
+     {q:"Which is part of a complete Personal Digital Profile?",opts:["Only a LinkedIn profile","A resume, bio, wallet, and web presence","Only a digital business card","A social media following"],ans:1},
+     {q:"What is the purpose of a personal dashboard?",opts:["To track your followers","To centralize your digital identity in one place","To replace your resume","To manage your email"],ans:1},
+     {q:"Month 1 of your 90-day plan should focus on:",opts:["Expanding your network aggressively","Completing and publishing your profile components","Starting a podcast","Redesigning your wallet"],ans:1},
+   ],
+   resources:["Capstone Checklist: Personal Digital Profile","Template: 90-Day Digital Identity Plan","Tool List: Personal Dashboard Options","Final Audit Worksheet"],
+   action:"Complete your Personal Digital Profile using the capstone checklist. Present it to one peer or mentor and collect written feedback."},
+];
+
+const PBar=({v,color=TEAL})=>(
+  <div style={{background:"rgba(0,0,0,0.35)",borderRadius:2,height:4}}>
+    <div style={{background:color,height:4,borderRadius:2,width:`${v}%`,boxShadow:`0 0 8px ${color}`,transition:"width 0.6s ease"}}/>
+  </div>
+);
+
+export default function App(){
+  const [activeModule,setActiveModule]=useState(0);
+  const [activeLesson,setActiveLesson]=useState(0);
+  const [completed,setCompleted]=useState({});
+  const [quizState,setQuizState]=useState({});
+  const [quizAnswers,setQuizAnswers]=useState({});
+  const [view,setView]=useState("lesson");
+
+  const mod=modules[activeModule];
+  const lesson=mod.lessons[activeLesson];
+  const lKey=`${activeModule}-${activeLesson}`;
+  const qKey=`quiz-${activeModule}`;
+  const accent=modAccents[activeModule];
+  const markDone=()=>setCompleted(p=>({...p,[lKey]:true}));
+  const modPct=(mi)=>{const ks=modules[mi].lessons.map((_,li)=>`${mi}-${li}`);return Math.round(ks.filter(k=>completed[k]).length/ks.length*100);};
+  const totalPct=()=>{const all=modules.flatMap((m,mi)=>m.lessons.map((_,li)=>`${mi}-${li}`));return Math.round(all.filter(k=>completed[k]).length/all.length*100);};
+  const submitQuiz=()=>{const ans=quizAnswers[activeModule]||{};const sc=mod.quiz.reduce((a,q,i)=>a+(ans[i]===q.ans?1:0),0);setQuizState(p=>({...p,[qKey]:{submitted:true,score:sc}}));};
+  const qS=quizState[qKey]||{};
+
+  const downloadCourse = () => {
+    const content = modules.map(m => [
+      `${"=".repeat(60)}`,
+      `MODULE ${m.id} — ${m.date}`,
+      `${m.title.toUpperCase()}`,
+      `${m.subtitle}`,
+      `${"=".repeat(60)}`,
+      ``,
+      `LEARNING OBJECTIVE`,
+      `${m.objective}`,
+      ``,
+      `OVERVIEW`,
+      `${m.overview}`,
+      ``,
+      ...m.lessons.flatMap(l => [
+        `-`.repeat(40),
+        `LESSON ${l.id}: ${l.title}`,
+        `-`.repeat(40),
+        `${l.content}`,
+        ``,
+      ]),
+      `MODULE ACTION STEP`,
+      `${m.action}`,
+      ``,
+      `QUIZ`,
+      ...m.quiz.map((q,i) => [
+        `Q${i+1}. ${q.q}`,
+        ...q.opts.map((o,oi) => `   ${oi===q.ans?"✓":"○"} ${o}`),
+        ``
+      ]).flat(),
+      `RESOURCES`,
+      ...m.resources.map(r => `  · ${r}`),
+      ``,
+    ].join("\n")).join("\n\n");
+
+    const header = [
+      `MICROBIZ — TECH TUESDAYS`,
+      `Digital Identity Mini-Course`,
+      `April 7 – April 28`,
+      `Final Deliverable: Personal Digital Profile`,
+      `${"=".repeat(60)}`,
+      ``,
+    ].join("\n");
+
+    const blob = new Blob([header + content], { type:"text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "microbiz-digital-identity-mini-course.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return(
+    <div style={{...BG,display:"flex",flexDirection:"column"}}><style>{G}</style>
+
+    {/* Topbar */}
+    <div style={{...card({borderRadius:0,border:"none",borderBottom:"1px solid rgba(255,255,255,0.15)"}),padding:"12px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10,position:"sticky",top:0,zIndex:20}}>
+      <div>
+        <div style={{...M,fontSize:10,color:TEAL,letterSpacing:3,textTransform:"uppercase",fontWeight:700,textShadow:`0 0 8px ${TEAL}`}}>MicroBiz · Tech Tuesdays</div>
+        <div style={{...TF,fontSize:15,fontWeight:700,color:"#fff"}}>Digital Identity Mini-Course</div>
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:12}}>
+        <div style={{textAlign:"right"}}>
+          <div style={{...M,fontSize:10,color:"rgba(255,255,255,0.55)",letterSpacing:1,marginBottom:4,fontWeight:600}}>OVERALL · {totalPct()}%</div>
+          <div style={{width:160}}><PBar v={totalPct()} color={TEAL}/></div>
+        </div>
+      </div>
+    </div>
+
+    <div style={{display:"flex",flex:1,minHeight:0}}>
+      {/* Sidebar */}
+      <div style={{width:230,background:"rgba(0,0,0,0.28)",backdropFilter:"blur(12px)",borderRight:"1px solid rgba(255,255,255,0.12)",padding:"16px 0",flexShrink:0,overflowY:"auto"}}>
+        {modules.map((m,mi)=>{
+          const ac=modAccents[mi];
+          return(
+            <div key={mi}>
+              <div onClick={()=>{setActiveModule(mi);setActiveLesson(0);setView("lesson");}}
+                style={{padding:"10px 16px",cursor:"pointer",background:activeModule===mi?"rgba(0,0,0,0.3)":"transparent",borderLeft:`3px solid ${activeModule===mi?ac:"transparent"}`,transition:"all 0.15s",boxShadow:activeModule===mi?`inset 0 0 20px ${ac}18`:"none"}}>
+                <div style={{...M,fontSize:9,color:activeModule===mi?ac:"rgba(255,255,255,0.4)",letterSpacing:2,textTransform:"uppercase",marginBottom:3,fontWeight:700,textShadow:activeModule===mi?`0 0 8px ${ac}`:"none"}}>Module {String(mi+1).padStart(2,"0")} · {m.date}</div>
+                <div style={{...M,fontSize:12,color:activeModule===mi?"#fff":"rgba(255,255,255,0.6)",fontWeight:activeModule===mi?700:500,lineHeight:1.4}}>{m.title}</div>
+                <div style={{marginTop:6}}><PBar v={modPct(mi)} color={ac}/></div>
+                <div style={{...M,fontSize:9,color:"rgba(255,255,255,0.4)",marginTop:3,fontWeight:500}}>{modPct(mi)}% complete</div>
+              </div>
+              {activeModule===mi&&(
+                <div style={{background:"rgba(0,0,0,0.18)"}}>
+                  {m.lessons.map((l,li)=>(
+                    <div key={li} onClick={()=>{setActiveLesson(li);setView("lesson");}}
+                      style={{padding:"8px 16px 8px 26px",cursor:"pointer",display:"flex",alignItems:"center",gap:8,background:activeLesson===li&&view==="lesson"?"rgba(0,0,0,0.25)":"transparent"}}>
+                      <span style={{fontSize:10,color:completed[`${mi}-${li}`]?ac:"rgba(255,255,255,0.25)",textShadow:completed[`${mi}-${li}`]?`0 0 6px ${ac}`:"none"}}>{completed[`${mi}-${li}`]?"✓":"○"}</span>
+                      <span style={{...M,fontSize:11,color:activeLesson===li&&view==="lesson"?"#fff":"rgba(255,255,255,0.55)",fontWeight:activeLesson===li?600:400}}>{l.id} {l.title}</span>
+                    </div>
+                  ))}
+                  <div onClick={()=>setView("quiz")} style={{padding:"8px 16px 8px 26px",cursor:"pointer",display:"flex",alignItems:"center",gap:8,background:view==="quiz"?"rgba(0,0,0,0.25)":"transparent"}}>
+                    <span style={{fontSize:10,color:qS.submitted?ac:"rgba(255,255,255,0.25)",textShadow:qS.submitted?`0 0 6px ${ac}`:"none"}}>{qS.submitted?"✓":"◈"}</span>
+                    <span style={{...M,fontSize:11,color:view==="quiz"?"#fff":"rgba(255,255,255,0.55)",fontWeight:view==="quiz"?600:400}}>Module Quiz</span>
+                  </div>
+                  <div onClick={()=>setView("resources")} style={{padding:"8px 16px 8px 26px",cursor:"pointer",display:"flex",alignItems:"center",gap:8,background:view==="resources"?"rgba(0,0,0,0.25)":"transparent"}}>
+                    <span style={{fontSize:10,color:"rgba(255,255,255,0.25)"}}>↓</span>
+                    <span style={{...M,fontSize:11,color:view==="resources"?"#fff":"rgba(255,255,255,0.55)",fontWeight:view==="resources"?600:400}}>Resources</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      
