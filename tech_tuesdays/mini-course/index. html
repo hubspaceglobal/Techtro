@@ -218,4 +218,115 @@ export default function App(){
           );
         })}
       </div>
-      
+{/* Main content */}
+      <div style={{flex:1,overflowY:"auto",padding:"28px 24px",maxWidth:720}}>
+        {/* module header */}
+        <div style={{borderLeft:`3px solid ${accent}`,paddingLeft:16,marginBottom:24,boxShadow:`-4px 0 12px ${accent}44`}}>
+          <div style={{...M,fontSize:9,color:accent,letterSpacing:3,textTransform:"uppercase",marginBottom:4,fontWeight:700,textShadow:`0 0 8px ${accent}`}}>Module {String(activeModule+1).padStart(2,"0")} · {mod.date}</div>
+          <div style={{...TF,fontSize:20,fontWeight:700,color:"#fff"}}>{mod.title}</div>
+          <div style={{...M,fontSize:12,color:"rgba(255,255,255,0.65)",marginTop:2,fontWeight:500}}>{mod.subtitle}</div>
+        </div>
+
+        {view==="lesson"&&(
+          <div>
+            <div style={{...card({borderLeft:`3px solid ${accent}`,boxShadow:`0 0 16px ${accent}33`}),padding:"14px 18px",marginBottom:20}}>
+              <div style={{...M,fontSize:9,color:accent,letterSpacing:2,textTransform:"uppercase",marginBottom:6,fontWeight:700,textShadow:`0 0 8px ${accent}`}}>◈ Learning Objective</div>
+              <div style={{...M,fontSize:13,color:"rgba(255,255,255,0.92)",lineHeight:1.7,fontWeight:500}}>{mod.objective}</div>
+            </div>
+            {activeLesson===0&&<div style={{marginBottom:20}}>
+              <div style={{...M,fontSize:9,color:"rgba(255,255,255,0.5)",letterSpacing:2,textTransform:"uppercase",marginBottom:8,fontWeight:700}}>Module Overview</div>
+              <p style={{...M,fontSize:14,color:"rgba(255,255,255,0.85)",lineHeight:1.8,margin:0,fontWeight:400}}>{mod.overview}</p>
+            </div>}
+            <div style={{borderTop:"1px solid rgba(255,255,255,0.12)",paddingTop:22,marginBottom:22}}>
+              <div style={{...M,fontSize:9,color:"rgba(255,255,255,0.5)",letterSpacing:2,textTransform:"uppercase",marginBottom:10,fontWeight:700}}>Lesson {lesson.id}</div>
+              <div style={{...TF,fontSize:16,fontWeight:700,color:"#fff",marginBottom:14}}>{lesson.title}</div>
+              <p style={{...M,fontSize:14,color:"rgba(255,255,255,0.9)",lineHeight:1.85,margin:0,fontWeight:400}}>{lesson.content}</p>
+            </div>
+            {activeLesson===mod.lessons.length-1&&(
+              <div style={{...card({borderLeft:`3px solid ${RED}`,boxShadow:`0 0 16px ${RED}33`}),padding:"14px 18px",marginBottom:22}}>
+                <div style={{...M,fontSize:9,color:RED,letterSpacing:2,textTransform:"uppercase",marginBottom:6,fontWeight:700,textShadow:`0 0 8px ${RED}`}}>◈ Module Action Step</div>
+                <div style={{...M,fontSize:13,color:"rgba(255,255,255,0.92)",lineHeight:1.7,fontWeight:500}}>{mod.action}</div>
+              </div>
+            )}
+            <div style={{display:"flex",justifyContent:"space-between",marginTop:24,flexWrap:"wrap",gap:10}}>
+              <button onClick={()=>{if(activeLesson>0)setActiveLesson(l=>l-1);else if(activeModule>0){setActiveModule(m=>m-1);setActiveLesson(modules[activeModule-1].lessons.length-1);}}}
+                style={{...M,background:"rgba(0,0,0,0.28)",border:"1px solid rgba(255,255,255,0.3)",color:"rgba(255,255,255,0.8)",borderRadius:7,padding:"10px 22px",fontSize:12,cursor:"pointer",letterSpacing:1,fontWeight:600}}>← PREV</button>
+              <div style={{display:"flex",gap:10}}>
+                {!completed[lKey]&&<button onClick={markDone} style={{...M,background:`${accent}22`,border:`1px solid ${accent}`,color:"#fff",borderRadius:7,padding:"10px 20px",fontSize:12,cursor:"pointer",letterSpacing:1,fontWeight:700,boxShadow:`0 0 10px ${accent}55`}}>✓ MARK COMPLETE</button>}
+                <button onClick={()=>{markDone();activeLesson<mod.lessons.length-1?setActiveLesson(l=>l+1):setView("quiz");}}
+                  style={{...M,background:`${accent}22`,border:`2px solid ${accent}`,color:"#fff",borderRadius:7,padding:"10px 22px",fontSize:12,fontWeight:800,cursor:"pointer",letterSpacing:2,boxShadow:`0 0 16px ${accent}66`}}>NEXT →</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {view==="quiz"&&(
+          <div>
+            <div style={{...M,fontSize:10,color:accent,letterSpacing:2,textTransform:"uppercase",marginBottom:18,fontWeight:700,textShadow:`0 0 8px ${accent}`}}>◈ Module {activeModule+1} Quiz</div>
+            {mod.quiz.map((q,qi)=>{
+              const sel=(quizAnswers[activeModule]||{})[qi];const sub=qS.submitted;
+              return(
+                <div key={qi} style={{...card(),padding:18,marginBottom:14}}>
+                  <p style={{...M,fontSize:14,color:"#fff",margin:"0 0 12px",lineHeight:1.6,fontWeight:600}}>
+                    <span style={{color:accent,marginRight:8,fontWeight:700,textShadow:`0 0 8px ${accent}`}}>[{String(qi+1).padStart(2,"0")}]</span>{q.q}
+                  </p>
+                  <div style={{display:"flex",flexDirection:"column",gap:7}}>
+                    {q.opts.map((opt,oi)=>{
+                      const isSel=sel===oi;const isRight=oi===q.ans;
+                      let border="rgba(255,255,255,0.15)",bg="rgba(0,0,0,0.2)",color="rgba(255,255,255,0.65)",glow="none";
+                      if(sub){if(isRight){border=TEAL;bg=`${TEAL}22`;color="#fff";glow=`0 0 12px ${TEAL}66`;}else if(isSel){border=RED;bg=`${RED}22`;color="rgba(255,200,200,0.95)";glow=`0 0 12px ${RED}44`;}}
+                      else if(isSel){border=accent;bg=`${accent}22`;color="#fff";glow=`0 0 12px ${accent}55`;}
+                      return(
+                        <button key={oi} disabled={sub} onClick={()=>setQuizAnswers(p=>({...p,[activeModule]:{...(p[activeModule]||{}),[qi]:oi}}))}
+                          style={{...M,background:bg,border:`1.5px solid ${border}`,borderRadius:6,padding:"10px 14px",color,fontSize:13,cursor:sub?"default":"pointer",textAlign:"left",display:"flex",gap:10,fontWeight:isSel||isRight&&sub?700:500,boxShadow:glow}}>
+                          <span style={{flexShrink:0}}>{sub?(isRight?"✓":isSel?"✗":"○"):(isSel?"▶":"○")}</span>{opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+            {!qS.submitted
+              ?<button onClick={submitQuiz} disabled={Object.keys(quizAnswers[activeModule]||{}).length<mod.quiz.length}
+                  style={{...M,background:`${accent}22`,border:`2px solid ${accent}`,color:"#fff",borderRadius:7,padding:"12px 28px",fontSize:12,fontWeight:800,cursor:"pointer",letterSpacing:2,marginTop:8,boxShadow:`0 0 16px ${accent}66`}}>SUBMIT QUIZ →</button>
+              :<div style={{...card({borderLeft:`3px solid ${qS.score===mod.quiz.length?TEAL:RED}`,boxShadow:`0 0 16px ${qS.score===mod.quiz.length?TEAL:RED}44`}),padding:"16px 20px",marginTop:8}}>
+                  <div style={{...M,fontSize:10,color:qS.score===mod.quiz.length?TEAL:RED,letterSpacing:2,textTransform:"uppercase",marginBottom:4,fontWeight:700,textShadow:`0 0 8px ${qS.score===mod.quiz.length?TEAL:RED}`}}>Quiz Result</div>
+                  <div style={{...M,fontSize:22,fontWeight:900,color:"#fff"}}>{qS.score}/{mod.quiz.length} correct</div>
+                  <div style={{...M,fontSize:13,color:"rgba(255,255,255,0.78)",marginTop:4,fontWeight:500}}>{qS.score===mod.quiz.length?"Perfect score! Proceed to Resources.":"Review highlighted answers and revisit lessons as needed."}</div>
+                  <button onClick={()=>setView("resources")} style={{...M,marginTop:14,background:`${TEAL}22`,border:`1.5px solid ${TEAL}`,color:"#fff",borderRadius:6,padding:"9px 20px",fontSize:12,cursor:"pointer",letterSpacing:1,fontWeight:700,boxShadow:`0 0 12px ${TEAL}55`}}>VIEW RESOURCES →</button>
+                </div>}
+          </div>
+        )}
+
+        {view==="resources"&&(
+          <div>
+            <div style={{...M,fontSize:10,color:accent,letterSpacing:2,textTransform:"uppercase",marginBottom:18,fontWeight:700,textShadow:`0 0 8px ${accent}`}}>◈ Module {activeModule+1} Resources</div>
+            {mod.resources.map((r,i)=>(
+              <div key={i} style={{...card(),padding:"14px 18px",marginBottom:10,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div style={{display:"flex",gap:12,alignItems:"center"}}>
+                  <span style={{color:accent,fontSize:14,textShadow:`0 0 8px ${accent}`}}>↓</span>
+                  <span style={{...M,fontSize:13,color:"rgba(255,255,255,0.92)",fontWeight:600}}>{r}</span>
+                </div>
+                <button style={{...M,background:`${accent}22`,border:`1px solid ${accent}`,color:"#fff",borderRadius:5,padding:"6px 14px",fontSize:11,cursor:"pointer",letterSpacing:1,fontWeight:700,boxShadow:`0 0 10px ${accent}44`}}>DOWNLOAD</button>
+              </div>
+            ))}
+            <div style={{...card({borderLeft:`3px solid ${BROWN}`,boxShadow:`0 0 16px ${BROWN}44`}),padding:"16px 18px",marginTop:22}}>
+              <div style={{...M,fontSize:9,color:BROWN,letterSpacing:2,textTransform:"uppercase",marginBottom:8,fontWeight:700,textShadow:`0 0 8px ${BROWN}`,filter:"brightness(1.8)"}}>◈ Module Action Step</div>
+              <p style={{...M,fontSize:13,color:"rgba(255,255,255,0.92)",lineHeight:1.7,margin:0,fontWeight:500}}>{mod.action}</p>
+            </div>
+            {activeModule<modules.length-1
+              ?<button onClick={()=>{setActiveModule(m=>m+1);setActiveLesson(0);setView("lesson");}}
+                  style={{...M,marginTop:24,background:`${accent}22`,border:`2px solid ${accent}`,color:"#fff",borderRadius:7,padding:"12px 28px",fontSize:12,fontWeight:800,cursor:"pointer",letterSpacing:2,boxShadow:`0 0 18px ${accent}66`}}>NEXT MODULE →</button>
+              :<div style={{...card({boxShadow:`0 0 24px ${TEAL}66`}),padding:22,marginTop:24,textAlign:"center"}}>
+                  <div style={{fontSize:28,marginBottom:8}}>🏆</div>
+                  <div style={{...M,fontSize:13,color:"#fff",fontWeight:800,letterSpacing:2,marginBottom:6}}>COURSE COMPLETE</div>
+                  <div style={{...M,fontSize:13,color:"rgba(255,255,255,0.78)",fontWeight:500}}>You've completed the Digital Identity Mini-Course.<br/>Submit your Personal Digital Profile to your instructor.</div>
+                </div>}
+          </div>
+        )}
+      </div>
+    </div>
+    </div>
+  );
+}      
